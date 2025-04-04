@@ -23,7 +23,15 @@ def ingest_all_comments(client, bucket):
     for obj in bucket.objects.all():
         if obj.key.endswith('.json') and ('/comments/' in obj.key):
             ingest_comment(client, bucket, obj.key)
-
+    
+    for obj in bucket.objects.all():
+        if obj.key.endswith('.txt') and ('/comments_extracted_text/pdfminer' in obj.key):
+            print('Ingesting extracted text...')
+            try:
+                ingest_pdf_extracted(client, bucket, obj.key)
+            except Exception as e:
+                print(f"Error ingesting {obj.key}: {e}")
+     
 def extract_ids(filename):
     base = os.path.splitext(filename)[0]
 
